@@ -43,7 +43,7 @@ class TokenizeXmlSplitTest {
 
     @Test
     void inputAndOutput() throws InterruptedException {
-        mock.expectedBodiesReceived("<Info id='1'/>", "<Info id='3'/>");
+        mock.expectedBodiesReceived("<Info id='1'/>", "<Info id='2'/>");
 
         template.sendBody("<XML><Batch><Info id='1'/><Info id='2'/></Batch></XML>");
 
