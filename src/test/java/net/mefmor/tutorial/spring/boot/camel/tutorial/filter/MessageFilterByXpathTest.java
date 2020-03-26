@@ -1,4 +1,4 @@
-package net.mefmor.tutorial.spring.boot.camel.tutorial;
+package net.mefmor.tutorial.spring.boot.camel.tutorial.filter;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
