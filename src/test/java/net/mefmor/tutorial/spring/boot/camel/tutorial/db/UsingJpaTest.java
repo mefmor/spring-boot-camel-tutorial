@@ -9,7 +9,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
-public class UsingJpaTest {
+class UsingJpaTest {
     @Autowired
     private CustomerRepository customers;
 
