@@ -20,7 +20,7 @@ public class MockTest extends CamelTestSupport {
     }
 
     @BeforeEach
-    void mockEndpointSetup() throws Exception {
+    void mockEndpointSetup() {
         mock = getMockEndpoint("mock:quote");
     }
 
@@ -41,5 +41,17 @@ public class MockTest extends CamelTestSupport {
         template.sendBody("stub:jms:topic:quote", "Hello Camel");
 
         mock.assertIsSatisfied();
+    }
+
+    @Test
+    void testIsCamelMessage() throws InterruptedException {
+        mock.expectedMessageCount(2);
+        mock.message(0).body().contains("Camel");
+        mock.message(1).body().contains("Camel");
+
+        template.sendBody("stub:jms:topic:quote", "Hello Camel");
+        template.sendBody("stub:jms:topic:quote", "Camel rocks");
+
+        assertMockEndpointsSatisfied();
     }
 }
