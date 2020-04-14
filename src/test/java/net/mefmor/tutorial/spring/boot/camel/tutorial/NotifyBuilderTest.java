@@ -10,8 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 
 public class NotifyBuilderTest extends CamelTestSupport {
@@ -40,12 +39,12 @@ public class NotifyBuilderTest extends CamelTestSupport {
         template.sendBodyAndHeader("file://target/inbox", "Hello World",
                 Exchange.FILE_NAME, "hello.txt");
 
-        assertTrue(notify.matchesWaitTime());
+        assertThat(notify.matchesWaitTime()).isTrue();
 
         File target = new File("target/outbox/hello.txt");
-        assertTrue(target.exists());
+        assertThat(target).exists();
 
         String content = context.getTypeConverter().convertTo(String.class, target);
-        assertEquals("Hello World", content);
+        assertThat(content).isEqualTo("Hello World");
     }
 }
