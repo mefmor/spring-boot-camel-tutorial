@@ -1,4 +1,4 @@
-package net.mefmor.tutorial.spring.boot.camel.tutorial;
+package net.mefmor.tutorial.spring.boot.camel.tutorial.advicewith;
 
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
