@@ -7,6 +7,8 @@ import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.SplitDefinition;
 import org.apache.camel.reifier.RouteReifier;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -37,23 +39,30 @@ public class WeaveByTypeTest extends CamelTestSupport {
         };
     }
 
-    @Test
-    void testWeaveByType() throws Exception {
-
+    @BeforeEach
+    void changeRoute() throws Exception {
         ModelCamelContext mcc = context.adapt(ModelCamelContext.class);
         RouteReifier.adviceWith(mcc.getRouteDefinition("quotes"), mcc, new AdviceWithRouteBuilder() {
-                    @Override
-                    public void configure() {
-                        // find the splitter and insert the route snippet before it
-                        weaveByType(SplitDefinition.class)
-                                .before()
-                                .filter(body().contains("Donkey"))
-                                .transform(simple("${body},Mules cannot do this"));
-                    }
-                });
+            @Override
+            public void configure() {
+                // find the splitter and insert the route snippet before it
+                weaveByType(SplitDefinition.class)
+                        .before()
+                        .filter(body().contains("Donkey"))
+                        .transform(simple("${body},Mules cannot do this"));
+            }
+        });
 
         context.start();
+    }
 
+    @AfterEach
+    void reset() {
+        resetMocks();
+    }
+
+    @Test
+    void testWeaveByType() throws Exception {
         getMockEndpoint("mock:line").expectedBodiesReceived("camel rules", "donkey is bad", "mules cannot do this");
         getMockEndpoint("mock:combined").expectedMessageCount(1);
         getMockEndpoint("mock:combined").message(0).body().isInstanceOf(List.class);
@@ -61,11 +70,10 @@ public class WeaveByTypeTest extends CamelTestSupport {
         template.sendBody("seda:quotes", "Camel Rules,Donkey is Bad");
 
         assertMockEndpointsSatisfied();
+    }
 
-        resetMocks();
-
-        // try again without the donkeys
-
+    @Test
+    void testWeaveByTypeWithoutTheDonkeys() throws Exception {
         getMockEndpoint("mock:line").expectedBodiesReceived("beer is good", "whiskey is better");
         getMockEndpoint("mock:combined").expectedMessageCount(1);
         getMockEndpoint("mock:combined").message(0).body().isInstanceOf(List.class);
@@ -74,6 +82,5 @@ public class WeaveByTypeTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-
 
 }
