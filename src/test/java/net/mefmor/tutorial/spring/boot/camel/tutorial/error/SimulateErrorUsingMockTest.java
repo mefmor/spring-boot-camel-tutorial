@@ -32,10 +32,11 @@ public class SimulateErrorUsingMockTest extends CamelTestSupport {
 
     @Test
     void testSimulateErrorUsingMock() throws Exception {
+        getMockEndpoint("mock:http").expectedMessageCount(4);
         getMockEndpoint("mock:ftp").expectedBodiesReceived("Camel rocks");
 
-        MockEndpoint http = getMockEndpoint("mock:http");
-        http.whenAnyExchangeReceived(e -> e.setException(new ConnectException("Simulated connection error")));
+        getMockEndpoint("mock:http")
+                .whenAnyExchangeReceived(e -> e.setException(new ConnectException("Simulated connection error")));
 
         template.sendBody("direct:file", "Camel rocks");
 
