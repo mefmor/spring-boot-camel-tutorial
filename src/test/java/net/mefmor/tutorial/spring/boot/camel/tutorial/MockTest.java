@@ -54,4 +54,15 @@ public class MockTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
     }
+
+    @Test
+    void testRegexMessageBody() throws InterruptedException {
+        mock.allMessages().body().regex(".*Camel.*\\.");
+        mock.allMessages().body().endsWith(".");
+
+        template.sendBody("stub:jms:topic:quote", "Hello Camel.");
+        template.sendBody("stub:jms:topic:quote", "Camel rocks.");
+
+        assertMockEndpointsSatisfied();
+    }
 }
