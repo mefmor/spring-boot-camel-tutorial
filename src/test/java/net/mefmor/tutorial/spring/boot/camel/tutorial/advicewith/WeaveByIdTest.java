@@ -31,8 +31,9 @@ public class WeaveByIdTest extends CamelTestSupport {
             a.weaveById("transform").replace().transform().simple("${body.toUpperCase()}");
             a.weaveAddLast().to("mock:result");
         });
+        context.start();
 
-        getMockEndpoint("mock:result").expectedBodiesReceived("HELLO CAMEL");
+        getMockEndpoint("mock:result").expectedBodiesReceived("HELLO CAMEL!");
 
         template.sendBody("seda:quotes", "Hello Camel!");
 
