@@ -1,4 +1,4 @@
-package net.mefmor.tutorial.spring.boot.camel.tutorial;
+package net.mefmor.tutorial.spring.boot.camel.tutorial.notify;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.NotifyBuilder;
