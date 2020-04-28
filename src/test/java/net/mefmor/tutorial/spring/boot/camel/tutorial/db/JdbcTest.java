@@ -59,7 +59,7 @@ class JdbcTest {
     }
 
     @Test
-    void testJdbcInsert(@Autowired DataSource dataSource, @Autowired JdbcTemplate jdbc) throws Exception {
+    void testJdbcInsert(@Autowired JdbcTemplate jdbc) throws Exception {
         mock.expectedMessageCount(1);
 
         Integer rows = jdbc.queryForObject("select count(*) from incoming_orders", Integer.class);
