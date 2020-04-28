@@ -1,11 +1,9 @@
 package net.mefmor.tutorial.spring.boot.camel.tutorial.db;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.EndpointInject;
-import org.apache.camel.Produce;
-import org.apache.camel.ProducerTemplate;
+import org.apache.camel.*;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.language.xpath.XPath;
 import org.apache.camel.test.spring.junit5.CamelSpringTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,6 +16,8 @@ import org.springframework.test.context.ContextConfiguration;
 
 import javax.sql.DataSource;
 
+import java.util.Map;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @CamelSpringTest
@@ -25,14 +25,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 @BootstrapWith(SpringBootTestContextBootstrapper.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class JdbcTest {
-    @Autowired
-    private CamelContext camelContext;
-
-    @Autowired
-    private DataSource dataSource;
-
-    @Autowired
-    private JdbcTemplate jdbc;
 
     @Produce("direct:start")
     private ProducerTemplate template;
@@ -41,7 +33,7 @@ class JdbcTest {
     private MockEndpoint mock;
 
     @BeforeEach
-    void setupRoute() throws Exception {
+    void setupRoute(@Autowired CamelContext camelContext) throws Exception {
         camelContext.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
@@ -53,8 +45,21 @@ class JdbcTest {
         });
     }
 
+    public static class OrderToSqlBean {
+
+        public String toSql(@XPath("order/@name") String name,
+                            @XPath("order/@amount") int amount,
+                            @XPath("order/@customer") String customer,
+                            @Headers Map<String, Object> outHeaders) {
+            outHeaders.put("partName", name);
+            outHeaders.put("quantity", amount);
+            outHeaders.put("customer", customer);
+            return "insert into incoming_orders (part_name, quantity, customer) values (:?partName, :?quantity, :?customer)";
+        }
+    }
+
     @Test
-    void testJdbcInsert() throws Exception {
+    void testJdbcInsert(@Autowired DataSource dataSource, @Autowired JdbcTemplate jdbc) throws Exception {
         mock.expectedMessageCount(1);
 
         Integer rows = jdbc.queryForObject("select count(*) from incoming_orders", Integer.class);
