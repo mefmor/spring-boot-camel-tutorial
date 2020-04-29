@@ -1,37 +1,40 @@
-package net.mefmor.tutorial.spring.boot.camel.tutorial.error.handling;
+package net.mefmor.tutorial.spring.boot.camel.tutorial.error.handling.deadletter;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
+import org.apache.camel.Headers;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-class FailureProcessorTest extends CamelTestSupport {
+import java.util.Map;
+
+class FailureBeanTest extends CamelTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            class FailureProcessor implements Processor {
-                @Override
-                public void process(Exchange exchange) {
-                    Exception e = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
-                    String failure = "The message failed because " + e.getMessage();
-                    exchange.getIn().setHeader("FailureMessage", failure);
+            class FailureBean {
+                public void enrich(@Headers Map<String, String> headers, Exception cause) {
+                    String failure = "The message failed because " + cause.getMessage();
+                    headers.put("FailureMessage", failure);
                 }
             }
 
             @Override
             public void configure() {
-                errorHandler(deadLetterChannel("mock:dead")
-                        .useOriginalMessage().onPrepareFailure(new FailureProcessor()));
+                errorHandler(deadLetterChannel("direct:dead").useOriginalMessage());
 
                 from("direct:start")
                         .transform(constant("This is a changed body"))
                         .throwException(new IllegalArgumentException("Forced"));
 
+                from("direct:dead")
+                        .bean(new FailureBean())
+                        .to("mock:dead");
+
             }
         };
     }
+
 
     @Test
     void testEnrichFailure() throws Exception {
