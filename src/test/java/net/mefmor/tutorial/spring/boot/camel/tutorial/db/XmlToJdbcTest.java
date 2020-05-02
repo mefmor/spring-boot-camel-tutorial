@@ -1,8 +1,10 @@
 package net.mefmor.tutorial.spring.boot.camel.tutorial.db;
 
-import org.apache.camel.*;
+import org.apache.camel.CamelContext;
+import org.apache.camel.Headers;
+import org.apache.camel.Produce;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.language.xpath.XPath;
 import org.apache.camel.test.spring.junit5.CamelSpringTest;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,9 +30,6 @@ class XmlToJdbcTest {
 
     @Produce("direct:start")
     private ProducerTemplate template;
-
-    @EndpointInject("mock:result")
-    private MockEndpoint mock;
 
     @BeforeEach
     void setupRoute(@Autowired CamelContext camelContext) throws Exception {
