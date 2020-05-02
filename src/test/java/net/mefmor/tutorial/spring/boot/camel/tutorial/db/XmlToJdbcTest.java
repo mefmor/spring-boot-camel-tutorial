@@ -13,8 +13,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.BootstrapWith;
 import org.springframework.test.context.ContextConfiguration;
-
-import javax.sql.DataSource;
+import org.springframework.test.context.jdbc.Sql;
 
 import java.util.Map;
 
@@ -24,7 +23,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ContextConfiguration
 @BootstrapWith(SpringBootTestContextBootstrapper.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-class JdbcTest {
+@Sql("create-table-incoming_orders.sql")
+class XmlToJdbcTest {
 
     @Produce("direct:start")
     private ProducerTemplate template;
@@ -39,8 +39,7 @@ class JdbcTest {
             public void configure() throws Exception {
                 from("direct:start")
                         .bean(new OrderToSqlBean())
-                        .to("jdbc:dataSource?useHeadersAsParameters=true")
-                        .to("mock:result");
+                        .to("jdbc:dataSource?useHeadersAsParameters=true");
             }
         });
     }
@@ -59,17 +58,11 @@ class JdbcTest {
     }
 
     @Test
-    void testJdbcInsert(@Autowired JdbcTemplate jdbc) throws Exception {
-        mock.expectedMessageCount(1);
-
-        Integer rows = jdbc.queryForObject("select count(*) from incoming_orders", Integer.class);
-        assertThat(rows).isEqualTo(0);
+    void testJdbcInsert(@Autowired JdbcTemplate jdbc) {
+        assertThat(jdbc.queryForObject("select count(*) from incoming_orders", Integer.class)).isEqualTo(0);
 
         template.sendBody("direct:start", "<order name=\"motor\" amount=\"1\" customer=\"honda\"/>");
 
-        mock.assertIsSatisfied();
-
-        rows = jdbc.queryForObject("select count(*) from incoming_orders", Integer.class);
-        assertThat(rows).isEqualTo(1);
+        assertThat(jdbc.queryForObject("select count(*) from incoming_orders", Integer.class)).isEqualTo(1);
     }
 }

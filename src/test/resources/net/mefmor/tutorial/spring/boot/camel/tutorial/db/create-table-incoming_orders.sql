@@ -1,0 +1,1 @@
+create table IF NOT EXISTS incoming_orders ( part_name varchar(20), quantity int, customer varchar(20));
