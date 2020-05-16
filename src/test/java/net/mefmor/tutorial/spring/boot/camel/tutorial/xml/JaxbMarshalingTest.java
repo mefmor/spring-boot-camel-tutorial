@@ -34,8 +34,7 @@ public class JaxbMarshalingTest extends CamelTestSupport {
 
     @Test
     void transformObjectToXml() {
-        // FIXME: Too long path
-        String expectedOutput = asString("classpath:net/mefmor/tutorial/spring/boot/camel/tutorial/xml/expected_client.xml");
+        String expectedOutput = asString("expected_client.xml");
 
         template.sendBody("direct:object", Client.builder().name("Boris").build());
 
@@ -47,10 +46,6 @@ public class JaxbMarshalingTest extends CamelTestSupport {
 
     @SneakyThrows
     private String asString(String resourceLocation) {
-        Resource resource = new DefaultResourceLoader().getResource(resourceLocation);
-
-        try (Reader r = new InputStreamReader(resource.getInputStream(), UTF_8)) {
-            return FileCopyUtils.copyToString(r);
-        }
+        return FileCopyUtils.copyToString(new InputStreamReader(JaxbMarshalingTest.class.getResourceAsStream(resourceLocation)));
     }
 }
