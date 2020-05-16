@@ -18,6 +18,7 @@
 		<java.version>1.8</java.version>
 
 		<camel.version>3.1.0</camel.version>
+		<xmlunit2.version>2.7.0</xmlunit2.version>
 	</properties>
 
 	<dependencies>
@@ -42,6 +43,13 @@
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-test-spring-junit5</artifactId>
             <version>${camel.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.xmlunit</groupId>
+			<artifactId>xmlunit-assertj</artifactId>
+			<version>${xmlunit2.version}</version>
+			<scope>test</scope>
 		</dependency>
 
 		<dependency>
@@ -86,6 +94,13 @@
 		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-http</artifactId>
+			<version>${camel.version}</version>
+		</dependency>
+
+		<!-- when using JAXB data format -->
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-jaxb</artifactId>
 			<version>${camel.version}</version>
 		</dependency>
 	</dependencies>
