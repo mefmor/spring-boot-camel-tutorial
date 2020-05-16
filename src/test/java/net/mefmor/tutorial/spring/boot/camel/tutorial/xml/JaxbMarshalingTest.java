@@ -1,10 +1,19 @@
 package net.mefmor.tutorial.spring.boot.camel.tutorial.xml;
 
+import lombok.SneakyThrows;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.dataformat.JaxbDataFormat;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.springframework.core.io.DefaultResourceLoader;
+import org.springframework.core.io.Resource;
+import org.springframework.util.FileCopyUtils;
 import org.xmlunit.assertj.XmlAssert;
+
+import java.io.InputStreamReader;
+import java.io.Reader;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 
 public class JaxbMarshalingTest extends CamelTestSupport {
@@ -25,7 +34,8 @@ public class JaxbMarshalingTest extends CamelTestSupport {
 
     @Test
     void transformObjectToXml() {
-        String expectedOutput = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><client name=\"Boris\"/>";
+        // FIXME: Too long path
+        String expectedOutput = asString("classpath:net/mefmor/tutorial/spring/boot/camel/tutorial/xml/expected_client.xml");
 
         template.sendBody("direct:object", Client.builder().name("Boris").build());
 
@@ -33,5 +43,14 @@ public class JaxbMarshalingTest extends CamelTestSupport {
 
         XmlAssert.assertThat(actualOutput).and(expectedOutput)
                 .ignoreComments().ignoreWhitespace().areIdentical();
+    }
+
+    @SneakyThrows
+    private String asString(String resourceLocation) {
+        Resource resource = new DefaultResourceLoader().getResource(resourceLocation);
+
+        try (Reader r = new InputStreamReader(resource.getInputStream(), UTF_8)) {
+            return FileCopyUtils.copyToString(r);
+        }
     }
 }
