@@ -46,6 +46,6 @@ public class JaxbMarshalingTest extends CamelTestSupport {
 
     @SneakyThrows
     private String asString(String resourceLocation) {
-        return FileCopyUtils.copyToString(new InputStreamReader(JaxbMarshalingTest.class.getResourceAsStream(resourceLocation)));
+        return FileCopyUtils.copyToString(new InputStreamReader(this.getClass().getResourceAsStream(resourceLocation)));
     }
 }
