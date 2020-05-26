@@ -1,5 +1,7 @@
 package net.mefmor.tutorial.spring.boot.camel.tutorial.db;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,6 +13,8 @@ import javax.persistence.Id;
 @Entity
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 class Customer {
 
     @Id
