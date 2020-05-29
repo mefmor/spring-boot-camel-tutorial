@@ -1,18 +1,19 @@
-package net.mefmor.tutorial.spring.boot.camel.tutorial;
+package net.mefmor.tutorial.spring.boot.camel.tutorial.split;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 
-class TokenizeXmlSplitTest extends CamelTestSupport {
+public class SplitListTest extends CamelTestSupport {
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:xml")
-                        .split().tokenizeXML("Info")
+                from("direct:list")
+                        .split().body()
                         .to("mock:result");
             }
         };
@@ -20,9 +21,9 @@ class TokenizeXmlSplitTest extends CamelTestSupport {
 
     @Test
     void inputAndOutput() throws InterruptedException {
-        getMockEndpoint("mock:result").expectedBodiesReceived("<Info id='1'/>", "<Info id='2'/>");
+        getMockEndpoint("mock:result").expectedBodiesReceived("One", "Two", "Three");
 
-        template.sendBody("direct:xml", "<XML><Batch><Info id='1'/><Info id='2'/></Batch></XML>");
+        template.sendBody("direct:list", Arrays.asList("One", "Two", "Three"));
 
         assertMockEndpointsSatisfied();
     }
