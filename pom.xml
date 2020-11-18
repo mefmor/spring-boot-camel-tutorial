@@ -103,6 +103,15 @@
 			<artifactId>camel-jaxb</artifactId>
 			<version>${camel.version}</version>
 		</dependency>
+
+		<!-- For SOAP testing -->
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-spring-ws</artifactId>
+			<version>${camel.version}</version>
+		</dependency>
+
+
 	</dependencies>
 
 	<build>

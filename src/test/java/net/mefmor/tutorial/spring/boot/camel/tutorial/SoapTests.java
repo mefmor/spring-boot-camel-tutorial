@@ -1,0 +1,29 @@
+package net.mefmor.tutorial.spring.boot.camel.tutorial;
+
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.spring.ws.SpringWebserviceConstants;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+
+public class SoapTests extends CamelTestSupport {
+    @Override
+    protected RouteBuilder createRouteBuilder() {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:xml")
+                        .setHeader(SpringWebserviceConstants.SPRING_WS_SOAP_ACTION, simple("http://Example.org/ICalculator/Add"))
+                        .to("spring-ws:http://127.0.0.1:8080/ICalculator");
+            }
+        };
+    }
+
+    @Test
+    @Disabled("For using with SOAP UI")
+    void testSendMessageAdd() {
+
+        template.sendBody("direct:xml", "<exam:Add xmlns:exam=\"http://Example.org\" />");
+
+    }
+}
