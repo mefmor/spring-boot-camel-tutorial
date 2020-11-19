@@ -1,4 +1,4 @@
-package net.mefmor.tutorial.spring.boot.camel.tutorial;
+package net.mefmor.tutorial.spring.boot.camel.tutorial.soap;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.spring.ws.SpringWebserviceConstants;
@@ -8,7 +8,7 @@ import org.example.ObjectFactory;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-public class SoapTests extends CamelTestSupport {
+public class SpringWsTests extends CamelTestSupport {
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
